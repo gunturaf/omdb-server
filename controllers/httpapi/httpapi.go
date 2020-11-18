@@ -1,7 +1,6 @@
 package httpapi
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -15,8 +14,5 @@ func RunServer(port string, omdbService omdbservice.OMDBService) {
 	routes.Handle("/search", handlers.NewSearchHandler(omdbService))
 	routes.Handle("/single/{id}", handlers.NewSingleHandler(omdbService))
 
-	go http.ListenAndServe("0.0.0.0:"+port, routes)
-
-	fmt.Println("http api running at :" + port)
-	select {}
+	http.ListenAndServe("0.0.0.0:"+port, routes)
 }
