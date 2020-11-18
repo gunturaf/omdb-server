@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package grpcstub;
+
+import "entity/omdbEntity.proto";
+
+option go_package = "github.com/gunturaf/omdb-server/infrastructure/grpcstub";
+
+service Omdb {
+  rpc Search (entity.SearchRequest) returns (entity.SearchReply) {}
+  rpc Single (entity.SingleRequest) returns (entity.SingleReply) {}
+}
