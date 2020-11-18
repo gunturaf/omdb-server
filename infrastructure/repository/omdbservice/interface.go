@@ -7,6 +7,6 @@ import (
 )
 
 type OMDBService interface {
-	Search(ctx context.Context, text string, page uint) (entity.OMDBSearchResult, error)
-	GetByID(ctx context.Context, id string) (entity.OMDBResultSingle, error)
+	Search(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error)
+	GetByID(ctx context.Context, id string) (*entity.OMDBResultSingle, error)
 }

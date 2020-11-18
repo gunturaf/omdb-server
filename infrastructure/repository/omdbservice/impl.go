@@ -45,17 +45,14 @@ func (s OMDBServiceImpl) httpGetByte(ctx context.Context, endpoint string) ([]by
 	return ioutil.ReadAll(resp.Body)
 }
 
-func (s OMDBServiceImpl) baseEndpoint() string {
-	return s.baseURL + "?apikey=" + s.apiKey
-}
-
 func (s OMDBServiceImpl) Search(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error) {
 	qs := url.Values{
-		"s":    []string{text},
-		"page": []string{strconv.Itoa(int(page))},
+		"apikey": []string{s.apiKey},
+		"s":      []string{text},
+		"page":   []string{strconv.Itoa(int(page))},
 	}
 
-	endpoint := s.baseEndpoint() + qs.Encode()
+	endpoint := s.baseURL + "?" + qs.Encode()
 
 	body, err := s.httpGetByte(ctx, endpoint)
 	if err != nil {
@@ -77,10 +74,11 @@ func (s OMDBServiceImpl) Search(ctx context.Context, text string, page uint) (*e
 
 func (s OMDBServiceImpl) GetByID(ctx context.Context, id string) (*entity.OMDBResultSingle, error) {
 	qs := url.Values{
-		"i": []string{id},
+		"apikey": []string{s.apiKey},
+		"i":      []string{id},
 	}
 
-	endpoint := s.baseEndpoint() + qs.Encode()
+	endpoint := s.baseURL + "?" + qs.Encode()
 
 	body, err := s.httpGetByte(ctx, endpoint)
 	if err != nil {
