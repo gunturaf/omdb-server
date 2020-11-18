@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 
+	"github.com/gunturaf/omdb-server/controllers/httpapi/presenters"
 	"github.com/gunturaf/omdb-server/infrastructure/repository/omdbservice"
 )
 
@@ -39,13 +39,5 @@ func (han SearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resByte, err := json.Marshal(*response)
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(resByte)
+	presenters.WriteHTTPJSON(w, response)
 }
