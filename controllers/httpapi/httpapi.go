@@ -13,6 +13,7 @@ func RunServer(port string, omdbService omdbservice.OMDBService) {
 	routes := mux.NewRouter()
 
 	routes.Handle("/search", handlers.NewSearchHandler(omdbService))
+	routes.Handle("/single/{id}", handlers.NewSingleHandler(omdbService))
 
 	go http.ListenAndServe("0.0.0.0:"+port, routes)
 
