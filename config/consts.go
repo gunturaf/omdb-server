@@ -4,4 +4,5 @@ const (
 	OMDBApiBaseURL  = "OMDB_API_BASE_URL"
 	OMDBApiKey      = "OMDB_API_KEY"
 	HTTPServicePort = "HTTP_SERVICE_PORT"
+	GRPCServicePort = "GRPC_SERVICE_PORT"
 )
