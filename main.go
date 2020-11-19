@@ -1,20 +1,52 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
+	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gunturaf/omdb-server/config"
 	"github.com/gunturaf/omdb-server/controllers/grpcservice"
 	"github.com/gunturaf/omdb-server/controllers/httpapi"
+	"github.com/gunturaf/omdb-server/infrastructure/repository/mysqldb"
 	"github.com/gunturaf/omdb-server/infrastructure/repository/omdbservice"
 	"github.com/spf13/viper"
 )
 
+func init() {
+	config.ReadConfig()
+}
+
+func connectMysqlDB() *sql.DB {
+	mysqlDSL := mysqldb.MysqlDBDSL{
+		Username: viper.GetString(config.MysqlUsername),
+		Password: viper.GetString(config.MysqlPassword),
+		Host:     viper.GetString(config.MysqlHost),
+		Port:     viper.GetString(config.MysqlPort),
+		DBName:   viper.GetString(config.MysqlDBName),
+	}
+
+	db, err := sql.Open("mysql", mysqlDSL.GetDSN())
+	if err != nil {
+		panic(err)
+	}
+	if err := db.Ping(); err != nil {
+		panic(err)
+	}
+	db.SetConnMaxLifetime(3 * time.Minute)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
+	return db
+}
+
 func main() {
 	httpClient := http.DefaultClient
 
-	config.ReadConfig()
+	mysqlRepo := mysqldb.NewMysqlDB(connectMysqlDB())
+
+	fmt.Println(mysqlRepo)
 
 	omdbService := omdbservice.NewOMDBService(httpClient, viper.GetString(config.OMDBApiBaseURL), viper.GetString(config.OMDBApiKey))
 
