@@ -7,6 +7,7 @@ import (
 	"github.com/gunturaf/omdb-server/entity"
 	"github.com/gunturaf/omdb-server/infrastructure/grpcstub"
 	"github.com/gunturaf/omdb-server/infrastructure/repository/omdbservice"
+	"github.com/gunturaf/omdb-server/usecase"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -18,17 +19,19 @@ var (
 type GRPCServiceImpl struct {
 	grpcstub.UnimplementedOmdbServer
 
-	omdbService omdbservice.OMDBService
+	omdbService   omdbservice.OMDBService
+	searchUseCase usecase.SearchUseCase
 }
 
-func NewGRPCService(omdbService omdbservice.OMDBService) GRPCServiceImpl {
+func NewGRPCService(omdbService omdbservice.OMDBService, searchUseCase usecase.SearchUseCase) GRPCServiceImpl {
 	return GRPCServiceImpl{
-		omdbService: omdbService,
+		omdbService:   omdbService,
+		searchUseCase: omdbService,
 	}
 }
 
 func (impl GRPCServiceImpl) Search(ctx context.Context, r *entity.SearchRequest) (*entity.SearchReply, error) {
-	response, err := impl.omdbService.Search(ctx, r.GetSearchword(), uint(r.GetPage()))
+	response, err := impl.searchUseCase.Search(ctx, r.GetSearchword(), uint(r.GetPage()))
 	if err != nil || response == nil {
 		return nil, ErrNotFound
 	}

@@ -28,7 +28,7 @@ var _ = Describe("Impl", func() {
 					}, nil
 				}
 
-				service := grpcservice.NewGRPCService(mockOMDBService)
+				service := grpcservice.NewGRPCService(mockOMDBService, mockOMDBService)
 
 				reply, err := service.Search(context.Background(), &entity.SearchRequest{
 					Page:       1,
@@ -48,7 +48,7 @@ var _ = Describe("Impl", func() {
 					return nil, nil
 				}
 
-				service := grpcservice.NewGRPCService(mockOMDBService)
+				service := grpcservice.NewGRPCService(mockOMDBService, mockOMDBService)
 
 				_, err := service.Search(context.Background(), &entity.SearchRequest{
 					Page:       1,
@@ -69,7 +69,7 @@ var _ = Describe("Impl", func() {
 					}, nil
 				}
 
-				service := grpcservice.NewGRPCService(mockOMDBService)
+				service := grpcservice.NewGRPCService(mockOMDBService, mockOMDBService)
 
 				reply, err := service.Single(context.Background(), &entity.SingleRequest{
 					Id: "DavidBowie",
@@ -88,7 +88,7 @@ var _ = Describe("Impl", func() {
 					return nil, nil
 				}
 
-				service := grpcservice.NewGRPCService(mockOMDBService)
+				service := grpcservice.NewGRPCService(mockOMDBService, mockOMDBService)
 
 				_, err := service.Single(context.Background(), &entity.SingleRequest{
 					Id: "DavidBowie",

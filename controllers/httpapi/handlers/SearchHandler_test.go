@@ -7,6 +7,7 @@ import (
 
 	"github.com/gunturaf/omdb-server/entity"
 	"github.com/gunturaf/omdb-server/infrastructure/repository/omdbservice"
+	"github.com/gunturaf/omdb-server/usecase"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -15,11 +16,11 @@ var _ = Describe("SearchHandler", func() {
 
 	Describe("getPageAndSearchWord", func() {
 
-		mockOMDBService := omdbservice.NewMock()
+		mockSearchUseCase := usecase.NewMockSearchUseCase()
 
 		Context("given pagination and searchword", func() {
 			It("yield correct", func() {
-				han := NewSearchHandler(mockOMDBService)
+				han := NewSearchHandler(mockSearchUseCase)
 
 				r, err := http.NewRequest(http.MethodGet, "/?pagination=2&searchword=Batman", nil)
 				Expect(err).NotTo(HaveOccurred())
@@ -31,7 +32,7 @@ var _ = Describe("SearchHandler", func() {
 		})
 		Context("given pagination only", func() {
 			It("yield correct", func() {
-				han := NewSearchHandler(mockOMDBService)
+				han := NewSearchHandler(mockSearchUseCase)
 
 				r, err := http.NewRequest(http.MethodGet, "/?pagination=2", nil)
 				Expect(err).NotTo(HaveOccurred())
@@ -43,7 +44,7 @@ var _ = Describe("SearchHandler", func() {
 		})
 		Context("given searchword only", func() {
 			It("yield correct", func() {
-				han := NewSearchHandler(mockOMDBService)
+				han := NewSearchHandler(mockSearchUseCase)
 
 				r, err := http.NewRequest(http.MethodGet, "/?searchword=Batman", nil)
 				Expect(err).NotTo(HaveOccurred())
@@ -58,9 +59,9 @@ var _ = Describe("SearchHandler", func() {
 	Describe("ServeHTTP", func() {
 		Context("there's data", func() {
 			It("return http.StatusOK", func() {
-				mockOMDBService := omdbservice.NewMock()
+				mockSearchUseCase := usecase.NewMockSearchUseCase()
 
-				mockOMDBService.MockSearch = func(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error) {
+				mockSearchUseCase.MockSearch = func(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error) {
 					return &entity.OMDBSearchResult{}, nil
 				}
 
@@ -69,7 +70,7 @@ var _ = Describe("SearchHandler", func() {
 
 				w := httptest.NewRecorder()
 
-				han := NewSearchHandler(mockOMDBService)
+				han := NewSearchHandler(mockSearchUseCase)
 
 				han.ServeHTTP(w, r)
 
@@ -78,9 +79,9 @@ var _ = Describe("SearchHandler", func() {
 		})
 		Context("no data", func() {
 			It("return http.StatusNotFound", func() {
-				mockOMDBService := omdbservice.NewMock()
+				mockSearchUseCase := omdbservice.NewMock()
 
-				mockOMDBService.MockSearch = func(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error) {
+				mockSearchUseCase.MockSearch = func(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error) {
 					return nil, nil
 				}
 
@@ -89,7 +90,7 @@ var _ = Describe("SearchHandler", func() {
 
 				w := httptest.NewRecorder()
 
-				han := NewSearchHandler(mockOMDBService)
+				han := NewSearchHandler(mockSearchUseCase)
 
 				han.ServeHTTP(w, r)
 

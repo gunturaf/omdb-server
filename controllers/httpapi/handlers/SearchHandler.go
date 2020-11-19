@@ -5,16 +5,16 @@ import (
 	"strconv"
 
 	"github.com/gunturaf/omdb-server/controllers/httpapi/presenters"
-	"github.com/gunturaf/omdb-server/infrastructure/repository/omdbservice"
+	"github.com/gunturaf/omdb-server/usecase"
 )
 
 type SearchHandler struct {
-	omdbService omdbservice.OMDBService
+	searchUseCase usecase.SearchUseCase
 }
 
-func NewSearchHandler(omdbService omdbservice.OMDBService) SearchHandler {
+func NewSearchHandler(searchUseCase usecase.SearchUseCase) SearchHandler {
 	return SearchHandler{
-		omdbService: omdbService,
+		searchUseCase: searchUseCase,
 	}
 }
 
@@ -32,7 +32,7 @@ func (han SearchHandler) getPageAndSearchWord(r *http.Request) (uint, string) {
 func (han SearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	page, searchword := han.getPageAndSearchWord(r)
 
-	response, err := han.omdbService.Search(r.Context(), searchword, page)
+	response, err := han.searchUseCase.Search(r.Context(), searchword, page)
 	if err != nil || response == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
