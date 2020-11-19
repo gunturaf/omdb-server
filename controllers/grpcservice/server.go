@@ -5,12 +5,11 @@ import (
 	"net"
 
 	"github.com/gunturaf/omdb-server/infrastructure/grpcstub"
-	"github.com/gunturaf/omdb-server/infrastructure/repository/omdbservice"
 	"github.com/gunturaf/omdb-server/usecase"
 	"google.golang.org/grpc"
 )
 
-func RunGRPCServer(port string, omdbService omdbservice.OMDBService, searchUseCase usecase.SearchUseCase) {
+func RunGRPCServer(port string, searchUseCase usecase.SearchUseCase, singleUseCase usecase.SingleUseCase) {
 	lis, err := net.Listen("tcp", "0.0.0.0:"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -18,6 +17,6 @@ func RunGRPCServer(port string, omdbService omdbservice.OMDBService, searchUseCa
 	var opts []grpc.ServerOption
 
 	grpcServer := grpc.NewServer(opts...)
-	grpcstub.RegisterOmdbServer(grpcServer, NewGRPCService(omdbService, searchUseCase))
+	grpcstub.RegisterOmdbServer(grpcServer, NewGRPCService(searchUseCase, singleUseCase))
 	grpcServer.Serve(lis)
 }

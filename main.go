@@ -48,11 +48,12 @@ func main() {
 	mysqlRepo := mysqldb.NewMysqlDB(connectMysqlDB())
 	omdbService := omdbservice.NewOMDBService(httpClient, viper.GetString(config.OMDBApiBaseURL), viper.GetString(config.OMDBApiKey))
 	searchUseCase := usecase.NewSearchUseCase(omdbService, mysqlRepo)
+	singleUseCase := usecase.NewSingleUseCase(omdbService)
 
-	go httpapi.RunServer(viper.GetString(config.HTTPServicePort), omdbService, searchUseCase)
+	go httpapi.RunServer(viper.GetString(config.HTTPServicePort), searchUseCase, singleUseCase)
 	fmt.Println("http api running at :" + viper.GetString(config.HTTPServicePort))
 
-	go grpcservice.RunGRPCServer(viper.GetString(config.GRPCServicePort), omdbService, searchUseCase)
+	go grpcservice.RunGRPCServer(viper.GetString(config.GRPCServicePort), searchUseCase, singleUseCase)
 	fmt.Println("grpc server running at :" + viper.GetString(config.GRPCServicePort))
 
 	select {}

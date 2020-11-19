@@ -8,17 +8,18 @@ import (
 
 	"github.com/gunturaf/omdb-server/controllers/grpcservice"
 	"github.com/gunturaf/omdb-server/entity"
-	"github.com/gunturaf/omdb-server/infrastructure/repository/omdbservice"
+	"github.com/gunturaf/omdb-server/usecase"
 )
 
 var _ = Describe("Impl", func() {
 
-	mockOMDBService := omdbservice.NewMock()
+	mockSearchUseCase := usecase.NewMockSearchUseCase()
+	mockSingleUseCase := usecase.NewMockSingleUseCase()
 
 	Describe("Search", func() {
 		Context("there's data", func() {
 			It("ok", func() {
-				mockOMDBService.MockSearch = func(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error) {
+				mockSearchUseCase.MockSearch = func(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error) {
 					return &entity.OMDBSearchResult{
 						Search: []entity.OMDBResultCompact{
 							{
@@ -28,7 +29,7 @@ var _ = Describe("Impl", func() {
 					}, nil
 				}
 
-				service := grpcservice.NewGRPCService(mockOMDBService, mockOMDBService)
+				service := grpcservice.NewGRPCService(mockSearchUseCase, mockSingleUseCase)
 
 				reply, err := service.Search(context.Background(), &entity.SearchRequest{
 					Page:       1,
@@ -44,11 +45,11 @@ var _ = Describe("Impl", func() {
 
 		Context("no data", func() {
 			It("error", func() {
-				mockOMDBService.MockSearch = func(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error) {
+				mockSearchUseCase.MockSearch = func(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error) {
 					return nil, nil
 				}
 
-				service := grpcservice.NewGRPCService(mockOMDBService, mockOMDBService)
+				service := grpcservice.NewGRPCService(mockSearchUseCase, mockSingleUseCase)
 
 				_, err := service.Search(context.Background(), &entity.SearchRequest{
 					Page:       1,
@@ -63,13 +64,13 @@ var _ = Describe("Impl", func() {
 	Describe("Single", func() {
 		Context("there's data", func() {
 			It("ok", func() {
-				mockOMDBService.MockGetByID = func(ctx context.Context, id string) (*entity.OMDBResultSingle, error) {
+				mockSingleUseCase.MockSingle = func(ctx context.Context, id string) (*entity.OMDBResultSingle, error) {
 					return &entity.OMDBResultSingle{
 						Response: "True",
 					}, nil
 				}
 
-				service := grpcservice.NewGRPCService(mockOMDBService, mockOMDBService)
+				service := grpcservice.NewGRPCService(mockSearchUseCase, mockSingleUseCase)
 
 				reply, err := service.Single(context.Background(), &entity.SingleRequest{
 					Id: "DavidBowie",
@@ -84,11 +85,11 @@ var _ = Describe("Impl", func() {
 
 		Context("no data", func() {
 			It("error", func() {
-				mockOMDBService.MockGetByID = func(ctx context.Context, id string) (*entity.OMDBResultSingle, error) {
+				mockSingleUseCase.MockSingle = func(ctx context.Context, id string) (*entity.OMDBResultSingle, error) {
 					return nil, nil
 				}
 
-				service := grpcservice.NewGRPCService(mockOMDBService, mockOMDBService)
+				service := grpcservice.NewGRPCService(mockSearchUseCase, mockSingleUseCase)
 
 				_, err := service.Single(context.Background(), &entity.SingleRequest{
 					Id: "DavidBowie",

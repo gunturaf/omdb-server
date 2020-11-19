@@ -5,23 +5,23 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gunturaf/omdb-server/controllers/httpapi/presenters"
-	"github.com/gunturaf/omdb-server/infrastructure/repository/omdbservice"
+	"github.com/gunturaf/omdb-server/usecase"
 )
 
 type SingleHandler struct {
-	omdbService omdbservice.OMDBService
+	singleUseCase usecase.SingleUseCase
 }
 
-func NewSingleHandler(omdbService omdbservice.OMDBService) SingleHandler {
+func NewSingleHandler(singleUseCase usecase.SingleUseCase) SingleHandler {
 	return SingleHandler{
-		omdbService: omdbService,
+		singleUseCase: singleUseCase,
 	}
 }
 
 func (han SingleHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	single, err := han.omdbService.GetByID(r.Context(), id)
+	single, err := han.singleUseCase.Single(r.Context(), id)
 	if err != nil || single == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return

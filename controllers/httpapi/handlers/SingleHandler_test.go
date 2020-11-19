@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gunturaf/omdb-server/entity"
-	"github.com/gunturaf/omdb-server/infrastructure/repository/omdbservice"
+	"github.com/gunturaf/omdb-server/usecase"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -15,12 +15,12 @@ import (
 var _ = Describe("SingleHandler", func() {
 
 	Describe("ServeHTTP", func() {
-		mockOMDBService := omdbservice.NewMock()
+		mockSingleUseCase := usecase.NewMockSingleUseCase()
 
 		Context("there's any data", func() {
 			It("ok", func() {
 				id := "davidBowie"
-				mockOMDBService.MockGetByID = func(ctx context.Context, id string) (*entity.OMDBResultSingle, error) {
+				mockSingleUseCase.MockSingle = func(ctx context.Context, id string) (*entity.OMDBResultSingle, error) {
 					return &entity.OMDBResultSingle{
 						OMDBResultCompact: entity.OMDBResultCompact{
 							IMDBID: id,
@@ -28,7 +28,7 @@ var _ = Describe("SingleHandler", func() {
 					}, nil
 				}
 
-				han := NewSingleHandler(mockOMDBService)
+				han := NewSingleHandler(mockSingleUseCase)
 
 				w := httptest.NewRecorder()
 
@@ -48,11 +48,11 @@ var _ = Describe("SingleHandler", func() {
 		Context("no data", func() {
 			It("error", func() {
 				id := "davidBowie"
-				mockOMDBService.MockGetByID = func(ctx context.Context, id string) (*entity.OMDBResultSingle, error) {
+				mockSingleUseCase.MockSingle = func(ctx context.Context, id string) (*entity.OMDBResultSingle, error) {
 					return nil, nil
 				}
 
-				han := NewSingleHandler(mockOMDBService)
+				han := NewSingleHandler(mockSingleUseCase)
 
 				w := httptest.NewRecorder()
 
