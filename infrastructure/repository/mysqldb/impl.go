@@ -1,7 +1,6 @@
 package mysqldb
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -31,7 +30,7 @@ func NewMysqlDB(dbInstance repository.DB) MysqlDBImpl {
 	}
 }
 
-func (m MysqlDBImpl) SaveSearchActivity(ctx context.Context, searchWord string) error {
+func (m MysqlDBImpl) SaveSearchActivity(searchWord string) error {
 	_, err := m.dbInstance.Query("INSERT INTO search_activities (search_word, created_at) VALUES ( ?, ? )", searchWord, time.Now())
 	if err != nil {
 		return err

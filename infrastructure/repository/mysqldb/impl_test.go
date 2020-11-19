@@ -1,7 +1,6 @@
 package mysqldb_test
 
 import (
-	"context"
 	"database/sql"
 
 	. "github.com/onsi/ginkgo"
@@ -41,7 +40,7 @@ var _ = Describe("Impl", func() {
 				}
 				op := mysqldb.NewMysqlDB(db)
 
-				err := op.SaveSearchActivity(context.Background(), "Batman")
+				err := op.SaveSearchActivity("Batman")
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -53,7 +52,7 @@ var _ = Describe("Impl", func() {
 				}
 				op := mysqldb.NewMysqlDB(db)
 
-				err := op.SaveSearchActivity(context.Background(), "Batman")
+				err := op.SaveSearchActivity("Batman")
 				Expect(err).To(HaveOccurred())
 			})
 		})
