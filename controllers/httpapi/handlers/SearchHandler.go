@@ -25,9 +25,8 @@ func (han SearchHandler) getPageAndSearchWord(r *http.Request) (uint, string) {
 	if err != nil || page < 0 {
 		page = 1
 	}
-	searchword := qs.Get("searchword")
 
-	return uint(page), searchword
+	return uint(page), qs.Get("searchword")
 }
 
 func (han SearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {

@@ -43,23 +43,6 @@ var _ = Describe("Impl", func() {
 		})
 
 		Context("no data", func() {
-			It("given False, error", func() {
-				mockOMDBService.MockSearch = func(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error) {
-					return &entity.OMDBSearchResult{
-						Response: "False",
-					}, nil
-				}
-
-				service := grpcservice.NewGRPCService(mockOMDBService)
-
-				_, err := service.Search(context.Background(), &entity.SearchRequest{
-					Page:       1,
-					Searchword: "Batman",
-				})
-
-				Expect(err).To(HaveOccurred())
-			})
-
 			It("error", func() {
 				mockOMDBService.MockSearch = func(ctx context.Context, text string, page uint) (*entity.OMDBSearchResult, error) {
 					return nil, nil
@@ -100,22 +83,6 @@ var _ = Describe("Impl", func() {
 		})
 
 		Context("no data", func() {
-			It("given False, error", func() {
-				mockOMDBService.MockGetByID = func(ctx context.Context, id string) (*entity.OMDBResultSingle, error) {
-					return &entity.OMDBResultSingle{
-						Response: "False",
-					}, nil
-				}
-
-				service := grpcservice.NewGRPCService(mockOMDBService)
-
-				_, err := service.Single(context.Background(), &entity.SingleRequest{
-					Id: "DavidBowie",
-				})
-
-				Expect(err).To(HaveOccurred())
-			})
-
 			It("error", func() {
 				mockOMDBService.MockGetByID = func(ctx context.Context, id string) (*entity.OMDBResultSingle, error) {
 					return nil, nil

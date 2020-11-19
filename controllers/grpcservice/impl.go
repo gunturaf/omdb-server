@@ -33,20 +33,12 @@ func (impl GRPCServiceImpl) Search(ctx context.Context, r *entity.SearchRequest)
 		return nil, ErrNotFound
 	}
 
-	if response.Response == "False" {
-		return nil, ErrNotFound
-	}
-
 	return presenters.SearchResultToProto(response), nil
 }
 
 func (impl GRPCServiceImpl) Single(ctx context.Context, r *entity.SingleRequest) (*entity.SingleReply, error) {
 	single, err := impl.omdbService.GetByID(ctx, r.GetId())
 	if err != nil || single == nil {
-		return nil, ErrNotFound
-	}
-
-	if single.Response == "False" {
 		return nil, ErrNotFound
 	}
 
